@@ -2,7 +2,7 @@ import { test, expect } from 'claude-code/testing'
 
 import { parse } from './command'
 
-const now = { skin: 'claude', color: 'auto', speed: 'normal', rows: 'compact', showWhileWorking: true, snug: true, isHidden: false }
+const now = { skin: 'claude', color: 'auto', speed: 'normal', rows: 'compact', showWhileWorking: true, isHidden: false }
 
 test('no args lists the options', () => {
   const out = parse('', now)
@@ -25,10 +25,4 @@ test('working takes on or off', () => {
 test('hide, show and toggle', () => {
   expect(parse('hide', now)).toMatchObject({ kind: 'hide', isHidden: true })
   expect(parse('toggle', { ...now, isHidden: true })).toMatchObject({ isHidden: false })
-})
-
-test('snug takes on or off', () => {
-  expect(parse('snug off', now)).toMatchObject({ field: 'snug', value: false })
-  expect(parse('flush on', now)).toMatchObject({ field: 'snug', value: true })
-  expect(parse('snug', now).kind).toBe('text')
 })

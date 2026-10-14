@@ -18,7 +18,6 @@ Type `/ccbuddy` for the current settings, or change one:
 /ccbuddy speed fast
 /ccbuddy rows tall        (compact takes one row, tall takes two)
 /ccbuddy working off      (hide while Claude is working)
-/ccbuddy snug off         (on: sits right on the prompt line)
 /ccbuddy hide | show
 ```
 

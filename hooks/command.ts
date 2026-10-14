@@ -13,7 +13,6 @@ export type Current = {
   speed: string
   rows: string
   showWhileWorking: boolean
-  snug: boolean
   isHidden: boolean
 }
 
@@ -28,7 +27,6 @@ const ALIASES: Record<string, string> = {
   size: 'rows',
   work: 'working',
   busy: 'working',
-  flush: 'snug',
 }
 
 export const help = (c: Current): string =>
@@ -39,9 +37,8 @@ export const help = (c: Current): string =>
     `  speed    ${c.speed}  (${CHOICES.speed.join(', ')})`,
     `  rows     ${c.rows}  (compact takes one row, tall takes two)`,
     `  working  ${c.showWhileWorking ? 'on' : 'off'}  (show while Claude works)`,
-    `  snug     ${c.snug ? 'on' : 'off'}  (pull the buddy down onto the prompt line)`,
     '',
-    'Usage: /ccbuddy skin minion | color cyan | speed fast | rows tall | working off | snug off | hide | show',
+    'Usage: /ccbuddy skin minion | color cyan | speed fast | rows tall | working off | hide | show',
   ].join('\n')
 
 export const parse = (args: string, c: Current): Outcome => {
@@ -62,22 +59,19 @@ export const parse = (args: string, c: Current): Outcome => {
     }
   }
 
-  if (word === 'working' || word === 'snug') {
+  if (word === 'working') {
     const isOn = ['on', 'yes', 'true'].includes(value)
     const isOff = ['off', 'no', 'false'].includes(value)
 
     if (!isOn && !isOff) {
-      return { kind: 'text', text: `Usage: /ccbuddy ${word} on|off` }
+      return { kind: 'text', text: 'Usage: /ccbuddy working on|off' }
     }
 
     return {
       kind: 'set',
-      field: word === 'snug' ? 'snug' : 'showWhileWorking',
+      field: 'showWhileWorking',
       value: isOn,
-      text:
-        word === 'snug'
-          ? `Buddy ${isOn ? 'sits on' : 'floats above'} the prompt line.`
-          : `Buddy ${isOn ? 'stays' : 'steps out'} while Claude works.`,
+      text: `Buddy ${isOn ? 'stays' : 'steps out'} while Claude works.`,
     }
   }
 

@@ -19,7 +19,6 @@ export const register: Register = (on, options) => {
   const rows = options.rows === 'tall' ? 2 : 1
   const tickMs = SPEEDS[String(options.speed)] ?? 300
   const isShownWhileWorking = options.showWhileWorking !== false
-  const isSnug = options.snug !== false
 
   let buddy = create()
   let isWorking = false
@@ -50,7 +49,6 @@ export const register: Register = (on, options) => {
       speed: String(options.speed),
       rows: rows === 2 ? 'tall' : 'compact',
       showWhileWorking: isShownWhileWorking,
-      snug: isSnug,
       isHidden: await read($, isHidden),
     })
 
@@ -93,8 +91,7 @@ export const register: Register = (on, options) => {
     const { Box, Text } = $.ui.resolve(e)
 
     return (
-      // the engine leaves a blank row under the band; -1 closes it
-      <Box flexDirection="column" marginBottom={isSnug ? -1 : 0}>
+      <Box flexDirection="column">
         {text.split('\n').map(row => (
           <Text color={color}>{row}</Text>
         ))}
