@@ -131,8 +131,8 @@ export const step = (
   const tick = b.tick + 1
 
   if (b.stopLeft > 0) {
-    const frames = ALL[b.stopKind]
-    const frame = frames[(frames.length * LOOPS - b.stopLeft) % frames.length]
+    const frames = ALL[b.stopKind] ?? CHEER
+    const frame = frames[(frames.length * LOOPS - b.stopLeft) % frames.length] ?? LAND
     const buddy = { ...b, tick, stopLeft: b.stopLeft - 1 }
 
     return { buddy, line: draw(b.x, frame, rows) }
@@ -144,7 +144,7 @@ export const step = (
       ...b,
       tick,
       stopKind,
-      stopLeft: TRICKS[stopKind].length * LOOPS,
+      stopLeft: (TRICKS[stopKind]?.length ?? 1) * LOOPS,
       untilStop: between(8, 22, roll()),
     }
 
@@ -161,7 +161,7 @@ export const step = (
       ? isWorking ? RUN_LEFT : WALK_LEFT
       : isWorking ? RUN_RIGHT : WALK_RIGHT
   const isBlink = tick % 13 === 0
-  const sprite = frames[tick % 2]
+  const sprite = frames[tick % 2] ?? ''
   const buddy = { ...b, x, dir, tick, untilStop: b.untilStop - 1 }
 
   return {

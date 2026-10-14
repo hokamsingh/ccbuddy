@@ -10,4 +10,14 @@ A cute little buddy that walks right to left above the Claude Code prompt, stops
 
 ## Options
 
-Set in `/config` (or `pluginConfigs` in settings): `color`, `speed` (slow, normal, fast), `rows` (compact takes one row, tall takes two), and `showWhileWorking`.
+Type `/ccbuddy` for the current settings, or change one:
+
+```
+/ccbuddy color cyan
+/ccbuddy speed fast
+/ccbuddy rows tall        (compact takes one row, tall takes two)
+/ccbuddy working off      (hide while Claude is working)
+/ccbuddy hide | show
+```
+
+Your choices are saved and stay between sessions.

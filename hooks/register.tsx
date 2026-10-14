@@ -1,6 +1,7 @@
 import { atom, read, update } from 'claude-code'
 import type { Register } from 'claude-code'
 
+import { parse } from './command'
 import { cheer, create, step } from './walk'
 
 const line = atom({ plugin: 'buddy', key: 'line' } as const, '')
@@ -19,8 +20,8 @@ export const register: Register = (on, options) => {
 
   on('session.start', async ($, e, next) => {
     await $.command.register({
-      name: 'buddy',
-      description: 'Show or hide your little buddy above the prompt',
+      name: 'ccbuddy',
+      description: 'Buddy options: color, speed, rows, working, hide, show',
     })
 
     $.clock.every(tickMs, async () => {
@@ -36,11 +37,35 @@ export const register: Register = (on, options) => {
     return next(e)
   })
 
-  on('command.run', { command: 'buddy' }, async $ => {
-    const hidden = !(await read($, isHidden))
-    await update($, isHidden, () => hidden)
+  on('command.run', { command: 'ccbuddy' }, async ($, e) => {
+    const outcome = parse(e.args, {
+      color,
+      speed: String(options.speed),
+      rows: rows === 2 ? 'tall' : 'compact',
+      showWhileWorking: isShownWhileWorking,
+      isHidden: await read($, isHidden),
+    })
 
-    return { text: hidden ? 'Buddy is napping elsewhere.' : 'Buddy is back!' }
+    if (outcome.kind === 'hide') {
+      await update($, isHidden, () => outcome.isHidden)
+    }
+
+    if (outcome.kind === 'set') {
+      // a config row's key is `<plugin>.<field>`; saving it reloads this module
+      const row = (await $.config.list()).find(
+        r => r.key.endsWith(`.${outcome.field}`) && r.provider.plugin === 'buddy',
+      )
+      const saved = await $.config.set({
+        key: row?.key ?? `buddy.${outcome.field}`,
+        value: outcome.value,
+      })
+
+      if ('deny' in saved) {
+        return { text: `Could not change it: ${saved.deny}` }
+      }
+    }
+
+    return { text: outcome.text }
   })
 
   on('turn.complete', ($, e, next) => {
