@@ -1,9 +1,19 @@
 {
   "name": "buddy",
-  "version": "0.3.0",
-  "description": "A cute little buddy that walks right to left above the prompt, stops to dance, wave or nap, then carries on.",
+  "version": "0.4.0",
+  "description": "A little minion that walks right to left above the prompt, stops to say bello, dance, nap or chase a butterfly, then carries on.",
   "types": "./types/index.d.ts",
   "userConfig": {
+    "skin": {
+      "type": "string",
+      "title": "Skin",
+      "description": "minion has goggle eyes and says bello and banana; classic is the plain buddy",
+      "default": "minion",
+      "options": [
+        "minion",
+        "classic"
+      ]
+    },
     "color": {
       "type": "string",
       "title": "Color",

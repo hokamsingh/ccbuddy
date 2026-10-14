@@ -11,6 +11,7 @@ const SPEEDS: Record<string, number> = { slow: 450, normal: 300, fast: 180 }
 
 export const register: Register = (on, options) => {
   const color = String(options.color)
+  const skin = options.skin === 'classic' ? 'classic' : 'minion'
   const rows = options.rows === 'tall' ? 2 : 1
   const tickMs = SPEEDS[String(options.speed)] ?? 300
   const isShownWhileWorking = options.showWhileWorking !== false
@@ -21,7 +22,7 @@ export const register: Register = (on, options) => {
   on('session.start', async ($, e, next) => {
     await $.command.register({
       name: 'ccbuddy',
-      description: 'Buddy options: color, speed, rows, working, hide, show',
+      description: 'Buddy options: skin, color, speed, rows, working, hide, show',
     })
 
     $.clock.every(tickMs, async () => {
@@ -29,7 +30,7 @@ export const register: Register = (on, options) => {
         return
       }
 
-      const moved = step(buddy, isWorking, Math.random, rows)
+      const moved = step(buddy, isWorking, Math.random, rows, skin)
       buddy = moved.buddy
       await update($, line, () => moved.line)
     })
@@ -39,6 +40,7 @@ export const register: Register = (on, options) => {
 
   on('command.run', { command: 'ccbuddy' }, async ($, e) => {
     const outcome = parse(e.args, {
+      skin,
       color,
       speed: String(options.speed),
       rows: rows === 2 ? 'tall' : 'compact',

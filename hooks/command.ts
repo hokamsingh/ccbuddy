@@ -1,12 +1,14 @@
 // The /ccbuddy command: parses what was typed. Pure, so it is easy to test.
 
 export const CHOICES = {
+  skin: ['minion', 'classic'],
   color: ['yellow', 'magenta', 'cyan', 'green', 'red', 'blue', 'white'],
   speed: ['slow', 'normal', 'fast'],
   rows: ['compact', 'tall'],
 } as const
 
 export type Current = {
+  skin: string
   color: string
   speed: string
   rows: string
@@ -30,12 +32,13 @@ const ALIASES: Record<string, string> = {
 export const help = (c: Current): string =>
   [
     `ccbuddy: ${c.isHidden ? 'hidden' : 'showing'}`,
+    `  skin     ${c.skin}  (${CHOICES.skin.join(', ')})`,
     `  color    ${c.color}  (${CHOICES.color.join(', ')})`,
     `  speed    ${c.speed}  (${CHOICES.speed.join(', ')})`,
     `  rows     ${c.rows}  (compact takes one row, tall takes two)`,
     `  working  ${c.showWhileWorking ? 'on' : 'off'}  (show while Claude works)`,
     '',
-    'Usage: /ccbuddy color pink | speed fast | rows tall | working off | hide | show',
+    'Usage: /ccbuddy skin classic | color cyan | speed fast | rows tall | working off | hide | show',
   ].join('\n')
 
 export const parse = (args: string, c: Current): Outcome => {
@@ -72,7 +75,7 @@ export const parse = (args: string, c: Current): Outcome => {
     }
   }
 
-  if (word === 'color' || word === 'speed' || word === 'rows') {
+  if (word === 'skin' || word === 'color' || word === 'speed' || word === 'rows') {
     const choices: readonly string[] = CHOICES[word]
 
     if (!choices.includes(value)) {

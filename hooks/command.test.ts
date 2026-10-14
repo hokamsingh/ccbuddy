@@ -2,12 +2,12 @@ import { test, expect } from 'claude-code/testing'
 
 import { parse } from './command'
 
-const now = { color: 'yellow', speed: 'normal', rows: 'compact', showWhileWorking: true, isHidden: false }
+const now = { skin: 'minion', color: 'yellow', speed: 'normal', rows: 'compact', showWhileWorking: true, isHidden: false }
 
 test('no args lists the options', () => {
   const out = parse('', now)
   expect(out.kind).toBe('text')
-  expect(out.text).toContain('/ccbuddy color')
+  expect(out.text).toContain('/ccbuddy skin')
 })
 
 test('sets a choice and rejects a bad one', () => {

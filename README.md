@@ -1,4 +1,4 @@
-# claude-buddy
+# ccbuddy
 
 A cute little buddy that walks right to left above the Claude Code prompt, stops to wave, dance, nap or send hearts, then carries on. It runs faster while Claude is working. `/buddy` hides or shows it.
 
@@ -13,6 +13,7 @@ A cute little buddy that walks right to left above the Claude Code prompt, stops
 Type `/ccbuddy` for the current settings, or change one:
 
 ```
+/ccbuddy skin classic    (minion is the default)
 /ccbuddy color cyan
 /ccbuddy speed fast
 /ccbuddy rows tall        (compact takes one row, tall takes two)

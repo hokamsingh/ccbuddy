@@ -73,6 +73,33 @@ const TRICKS: Frame[][] = [
   [f('(•ᴗ•)'), f('\\(-ᴗ-)/'), f('\\(-o-)/'), f('(˘ᴗ˘)')],
 ]
 
+// only picked when the skin is the minion
+const MINION_TRICKS: Frame[][] = [
+  // bello!
+  [
+    f('(•ᴗ•)', '  bello!'),
+    f('\\(•ᴗ•)/', '  bello!'),
+    f('(•ᴗ•)', '  bello!'),
+    f('\\(•ᴗ•)/', '  bello!'),
+  ],
+  // banana!
+  [
+    f('(•o•)', '  ba-na-na!'),
+    f('\\(•o•)/', '  ba-na-na!'),
+    f('(•o•)', '  ba-na-na!'),
+    f('\\(★ᴗ★)/', '  banana!'),
+  ],
+  // hehe
+  [f('(•ᴗ•)', '  hehe'), f('(>ᴗ<)', '  hehe'), f('(•ᴗ•)', '  hehe!'), f('(>ᴗ<)', '  hehehe')],
+  // tulaliloo
+  [
+    f('♪(•ᴗ•)', '  tulaliloo'),
+    f('(•ᴗ•)♪', '  ti amo'),
+    f('♫(•ᴗ•)', '  tulaliloo'),
+    f('(•ᴗ•)♫', '  ti amo'),
+  ],
+]
+
 // played when a turn finishes, never picked at random
 const CHEER: Frame[] = [
   air('\\(★ᴗ★)/'),
@@ -83,9 +110,15 @@ const CHEER: Frame[] = [
   f('(•ᴗ•)♡', '   ♡'),
 ]
 
-const ALL = [...TRICKS, CHEER]
+const ALL = [...TRICKS, ...MINION_TRICKS, CHEER]
 const CHEER_KIND = ALL.length - 1
 const LOOPS = 2
+
+export type Skin = 'minion' | 'classic'
+
+// the minion has goggle eyes and a wider smile
+const dress = (line: string, skin: Skin): string =>
+  skin === 'minion' ? line.replaceAll('•', '◉').replaceAll('ᴗ', '‿') : line
 
 const between = (lo: number, hi: number, roll: number) =>
   lo + Math.floor(roll * (hi - lo + 1))
@@ -127,6 +160,7 @@ export const step = (
   isWorking: boolean,
   roll: () => number = Math.random,
   rows: 1 | 2 = 1,
+  skin: Skin = 'classic',
 ): { buddy: Buddy; line: string } => {
   const tick = b.tick + 1
 
@@ -135,20 +169,21 @@ export const step = (
     const frame = frames[(frames.length * LOOPS - b.stopLeft) % frames.length] ?? LAND
     const buddy = { ...b, tick, stopLeft: b.stopLeft - 1 }
 
-    return { buddy, line: draw(b.x, frame, rows) }
+    return { buddy, line: dress(draw(b.x, frame, rows), skin) }
   }
 
   if (b.untilStop <= 0 && b.x > 2 && b.x < TRACK - 12) {
-    const stopKind = Math.floor(roll() * TRICKS.length)
+    const pool = TRICKS.length + (skin === 'minion' ? MINION_TRICKS.length : 0)
+    const stopKind = Math.floor(roll() * pool)
     const buddy = {
       ...b,
       tick,
       stopKind,
-      stopLeft: (TRICKS[stopKind]?.length ?? 1) * LOOPS,
+      stopLeft: (ALL[stopKind]?.length ?? 1) * LOOPS,
       untilStop: between(8, 22, roll()),
     }
 
-    return step(buddy, isWorking, roll, rows)
+    return step(buddy, isWorking, roll, rows, skin)
   }
 
   const speed = isWorking ? 2 : 1
@@ -166,6 +201,6 @@ export const step = (
 
   return {
     buddy,
-    line: draw(x, f(isBlink ? sprite.replaceAll('•', '-') : sprite), rows),
+    line: dress(draw(x, f(isBlink ? sprite.replaceAll('•', '-') : sprite), rows), skin),
   }
 }
