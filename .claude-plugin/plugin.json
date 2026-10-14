@@ -1,1 +1,50 @@
-{ "name": "buddy", "version": "0.1.0", "description": "A cute little buddy that walks right to left above the prompt, stops to dance, wave or nap, then carries on.", "types": "./types/index.d.ts" }
+{
+  "name": "buddy",
+  "version": "0.2.0",
+  "description": "A cute little buddy that walks right to left above the prompt, stops to dance, wave or nap, then carries on.",
+  "types": "./types/index.d.ts",
+  "userConfig": {
+    "color": {
+      "type": "string",
+      "title": "Color",
+      "description": "Color of the buddy",
+      "default": "yellow",
+      "options": [
+        "yellow",
+        "magenta",
+        "cyan",
+        "green",
+        "red",
+        "blue",
+        "white"
+      ]
+    },
+    "speed": {
+      "type": "string",
+      "title": "Speed",
+      "description": "How fast the buddy moves",
+      "default": "normal",
+      "options": [
+        "slow",
+        "normal",
+        "fast"
+      ]
+    },
+    "rows": {
+      "type": "string",
+      "title": "Height",
+      "description": "compact takes one row above the prompt; tall takes two so hearts and hops float above the buddy",
+      "default": "compact",
+      "options": [
+        "compact",
+        "tall"
+      ]
+    },
+    "showWhileWorking": {
+      "type": "boolean",
+      "title": "Show while Claude works",
+      "description": "Turn off to give the row back while a turn is running",
+      "default": true
+    }
+  }
+}

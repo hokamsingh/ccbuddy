@@ -7,3 +7,7 @@ A cute little buddy that walks right to left above the Claude Code prompt, stops
 ```
 /plugin install buddy --marketplace hokamsingh/ccbuddy
 ```
+
+## Options
+
+Set in `/config` (or `pluginConfigs` in settings): `color`, `speed` (slow, normal, fast), `rows` (compact takes one row, tall takes two), and `showWhileWorking`.

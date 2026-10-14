@@ -15,20 +15,77 @@ export type Buddy = {
   untilStop: number
 }
 
+// one drawn moment: the buddy on the bottom row, extras (hearts, zzz) above
+type Frame = { top?: string; bottom: string; isAir?: boolean }
+
 const WALK_LEFT = ['<(•ᴗ•<)', '<(•ᴗ•)<']
 const WALK_RIGHT = ['(>•ᴗ•)>', '>(•ᴗ•>)']
 const RUN_LEFT = ['<(•o•<)', '<(•o•)<']
 const RUN_RIGHT = ['(>•o•)>', '>(•o•>)']
 
-// each stop is a short loop of frames, shown 300ms apiece
-const STOPS: string[][] = [
-  ['\\(•ᴗ•)', '(•ᴗ•)/', '\\(•ᴗ•)', '(•ᴗ•)/'],
-  ['┏(•ᴗ•)┛', '┗(•ᴗ•)┓', '┏(•ᴗ•)┛', '┗(•ᴗ•)┓', '┏(•ᴗ•)┛'],
-  ['(-ᴗ-)  z', '(-ᴗ-)  zZ', '(-ᴗ-)  zZz', '(-ᴗ-)  Zzz', '(-ᴗ-)  zZ'],
-  ['(•ᴗ•)', '(•ᴗ•) ♡', '(•ᴗ•)  ♡', '(•ᴗ•) ♡', '(•ᴗ•)'],
-  ['♪(•ᴗ•)', '(•ᴗ•)♪', '♫(•ᴗ•)', '(•ᴗ•)♫', '♪(•ᴗ•)'],
-  ['(•_•)', '(•_•)?', '(•o•)!', '\\(•ᴗ•)/'],
+const f = (bottom: string, top?: string): Frame => ({ bottom, top })
+
+const LAND = f('(•ᴗ•)')
+const air = (face: string): Frame => ({ top: face, bottom: '  ‾', isAir: true })
+
+// each trick is a short loop of frames, shown 300ms apiece, played twice
+const TRICKS: Frame[][] = [
+  // wave
+  [f('\\(•ᴗ•)'), f('(•ᴗ•)/'), f('\\(•ᴗ•)'), f('(•ᴗ•)/')],
+  // dance
+  [f('┏(•ᴗ•)┛'), f('┗(•ᴗ•)┓'), f('┏(•ᴗ•)┛'), f('┗(•ᴗ•)┓'), f('♪┏(•ᴗ•)┛♪')],
+  // nap
+  [
+    f('(-ᴗ-)', '      z'),
+    f('(-ᴗ-)', '       zZ'),
+    f('(-ᴗ-)', '        zZz'),
+    f('(-ᴗ-)', '       Zzz'),
+  ],
+  // hearts
+  [
+    f('(•ᴗ•)'),
+    f('(•ᴗ•)♡', '   ♡'),
+    f('(•ᴗ•)♡', '  ♡ ♡'),
+    f('(˘ᴗ˘)♡', ' ♡  ♡ ♡'),
+  ],
+  // sing
+  [f('♪(•ᴗ•)', '   ♪'), f('(•ᴗ•)♪', '    ♫'), f('♫(•ᴗ•)', '  ♪  ♬'), f('(•ᴗ•)♫', '   ♬')],
+  // hop hop hop
+  [LAND, air('(•o•)'), LAND, air('\\(•o•)/'), LAND, air('(•o•)')],
+  // dizzy
+  [f('(@ᴗ@)', '  ✦'), f('(@o@)', '  ✧'), f('(×ᴗ×)', ' ✦ ✧'), f('(×o×)', '  ✧')],
+  // chases a butterfly
+  [
+    f('(•o•)', '      *~'),
+    f('(•o•)', '     ~*'),
+    f('(°o°)', '    *~'),
+    f('(•o•)', '   ~*'),
+    f('(•ᴗ•)ᕗ', '    *'),
+    f('(•ᴗ•)♡', '   ♡'),
+  ],
+  // snack time
+  [f('(•ᴗ•) o'), f('(•ᴗ•)o'), f('(•o•)o', '   nom'), f('(•ᴗ•)·', '  nom'), f('(˘ᴗ˘)')],
+  // achoo
+  [f('(•_•)'), f('(•_•)'), f('(>_<)'), f('(>o<) achoo!'), f('(•ᴗ•)'), f('(•ᴗ•)')],
+  // looks around
+  [f('(•ᴗ•)'), f('(<ᴗ<)'), f('(<ᴗ<)'), f('(>ᴗ>)'), f('(>ᴗ>)'), f('(•o•)?')],
+  // stretch
+  [f('(•ᴗ•)'), f('\\(-ᴗ-)/'), f('\\(-o-)/'), f('(˘ᴗ˘)')],
 ]
+
+// played when a turn finishes, never picked at random
+const CHEER: Frame[] = [
+  air('\\(★ᴗ★)/'),
+  LAND,
+  air('\\(★ᴗ★)/'),
+  f('\\(★ᴗ★)/', '  ✧ ✦ ✧'),
+  f('\\(★ᴗ★)/', ' ✦ ✧ ✦'),
+  f('(•ᴗ•)♡', '   ♡'),
+]
+
+const ALL = [...TRICKS, CHEER]
+const CHEER_KIND = ALL.length - 1
+const LOOPS = 2
 
 const between = (lo: number, hi: number, roll: number) =>
   lo + Math.floor(roll * (hi - lo + 1))
@@ -42,33 +99,56 @@ export const create = (roll: () => number = Math.random): Buddy => ({
   untilStop: between(6, 16, roll()),
 })
 
-// one 300ms step; returns the next buddy and the line to draw
+// a turn just finished: celebrate where we stand
+export const cheer = (b: Buddy): Buddy => ({
+  ...b,
+  stopKind: CHEER_KIND,
+  stopLeft: CHEER.length * LOOPS,
+})
+
+// rows 2 draws extras (hearts, zzz, a hop's height) above the buddy; rows 1
+// folds them onto the buddy's own row so the band takes a single row
+const draw = (x: number, frame: Frame, rows: 1 | 2): string => {
+  const pad = ' '.repeat(x)
+
+  if (rows === 2) {
+    return `${pad}${frame.top ?? ''} \n${pad}${frame.bottom} `
+  }
+
+  const extra = (frame.top ?? '').trim()
+  const body = frame.isAir ? extra : extra ? `${frame.bottom} ${extra}` : frame.bottom
+
+  return `${pad}${body} `
+}
+
+// one 300ms step; returns the next buddy and the two rows to draw
 export const step = (
   b: Buddy,
   isWorking: boolean,
   roll: () => number = Math.random,
+  rows: 1 | 2 = 1,
 ): { buddy: Buddy; line: string } => {
   const tick = b.tick + 1
 
   if (b.stopLeft > 0) {
-    const frames = STOPS[b.stopKind]
-    const frame = frames[(frames.length - b.stopLeft) % frames.length]
+    const frames = ALL[b.stopKind]
+    const frame = frames[(frames.length * LOOPS - b.stopLeft) % frames.length]
     const buddy = { ...b, tick, stopLeft: b.stopLeft - 1 }
 
-    return { buddy, line: ' '.repeat(b.x) + frame }
+    return { buddy, line: draw(b.x, frame, rows) }
   }
 
-  if (b.untilStop <= 0 && b.x > 2 && b.x < TRACK - 8) {
-    const stopKind = Math.floor(roll() * STOPS.length)
+  if (b.untilStop <= 0 && b.x > 2 && b.x < TRACK - 12) {
+    const stopKind = Math.floor(roll() * TRICKS.length)
     const buddy = {
       ...b,
       tick,
       stopKind,
-      stopLeft: STOPS[stopKind].length * 2,
+      stopLeft: TRICKS[stopKind].length * LOOPS,
       untilStop: between(8, 22, roll()),
     }
 
-    return step(buddy, isWorking, roll)
+    return step(buddy, isWorking, roll, rows)
   }
 
   const speed = isWorking ? 2 : 1
@@ -80,7 +160,12 @@ export const step = (
     dir === 'left'
       ? isWorking ? RUN_LEFT : WALK_LEFT
       : isWorking ? RUN_RIGHT : WALK_RIGHT
+  const isBlink = tick % 13 === 0
+  const sprite = frames[tick % 2]
   const buddy = { ...b, x, dir, tick, untilStop: b.untilStop - 1 }
 
-  return { buddy, line: ' '.repeat(x) + frames[tick % 2] }
+  return {
+    buddy,
+    line: draw(x, f(isBlink ? sprite.replaceAll('•', '-') : sprite), rows),
+  }
 }
