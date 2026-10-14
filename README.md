@@ -13,7 +13,7 @@ A cute little buddy that walks right to left above the Claude Code prompt, stops
 Type `/ccbuddy` for the current settings, or change one:
 
 ```
-/ccbuddy skin minion      (claude is the default; also classic)
+/ccbuddy skin cat         (claude is the default; also minion, classic, bunny, ghost, robot)
 /ccbuddy color cyan
 /ccbuddy speed fast
 /ccbuddy rows tall        (compact takes one row, tall takes two)

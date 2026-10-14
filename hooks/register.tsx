@@ -3,18 +3,33 @@ import type { Register } from 'claude-code'
 
 import { parse } from './command'
 import { cheer, create, step } from './walk'
+import type { Skin } from './walk'
 
 const line = atom({ plugin: 'buddy', key: 'line' } as const, '')
 const isHidden = atom({ plugin: 'buddy', key: 'isHidden' } as const, false)
 
+const SKINS = ['claude', 'minion', 'classic', 'cat', 'bunny', 'ghost', 'robot'] as const
+
+// what `color: auto` means for each skin
+const SKIN_COLORS: Record<Skin, string> = {
+  claude: 'claude',
+  minion: 'yellow',
+  classic: 'yellow',
+  cat: 'magenta',
+  bunny: 'white',
+  ghost: 'cyan',
+  robot: 'green',
+}
+
 const SPEEDS: Record<string, number> = { slow: 450, normal: 300, fast: 180 }
 
 export const register: Register = (on, options) => {
-  const skin =
-    options.skin === 'classic' || options.skin === 'minion' ? options.skin : 'claude'
+  const skin = (SKINS as readonly string[]).includes(String(options.skin))
+    ? (options.skin as Skin)
+    : 'claude'
   const color =
     options.color === undefined || options.color === 'auto'
-      ? { claude: 'claude', minion: 'yellow', classic: 'yellow' }[skin]
+      ? SKIN_COLORS[skin]
       : String(options.color)
   const rows = options.rows === 'tall' ? 2 : 1
   const tickMs = SPEEDS[String(options.speed)] ?? 300

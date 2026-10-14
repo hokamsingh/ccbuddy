@@ -1,8 +1,8 @@
 // The Claude Code mascot, drawn in block characters. Pure, so it is easy to test.
 
-type Shown = { top?: string; bottom: string; isAir?: boolean }
+export type Shown = { top?: string; bottom: string; isAir?: boolean }
 
-type Pose = 'stand' | 'step' | 'up' | 'shut' | 'dizzy'
+export type Pose = 'stand' | 'step' | 'up' | 'shut' | 'dizzy'
 
 // compact: head and arms, two rows
 const SMALL: Record<Pose, string[]> = {
@@ -23,7 +23,7 @@ const TALL: Record<Pose, string[]> = {
 }
 
 // the text frames draw a face; read the mood off it
-const poseOf = (frame: Shown, tick: number): Pose => {
+export const poseOf = (frame: Shown, tick: number): Pose => {
   const face = frame.bottom
 
   if (frame.isAir || /\\\(|\)\/|[┏┗]/.test(face)) return 'up'
@@ -34,7 +34,7 @@ const poseOf = (frame: Shown, tick: number): Pose => {
 }
 
 // hearts, notes, words: whatever the frame draws around the face
-const extrasOf = (frame: Shown): string => {
+export const extrasOf = (frame: Shown): string => {
   const around = frame.bottom.match(/^(.*?)\((.*)\)(.*)$/)
   const beside = around ? `${around[1]} ${around[3]}` : ''
   const words = frame.isAir ? '' : (frame.top ?? '')

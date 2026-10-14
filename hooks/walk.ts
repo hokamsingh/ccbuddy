@@ -1,6 +1,8 @@
 // Pure buddy brain: no engine calls, so it is easy to test.
 
 import { drawMascot } from './mascot'
+import { drawPet, isPet } from './pets'
+import type { Pet } from './pets'
 
 export const TRACK = 44
 
@@ -126,7 +128,7 @@ const ALL = [...TRICKS, ...MINION_TRICKS, ...CLAUDE_TRICKS, CHEER]
 const CHEER_KIND = ALL.length - 1
 const LOOPS = 2
 
-export type Skin = 'claude' | 'minion' | 'classic'
+export type Skin = 'claude' | 'minion' | 'classic' | Pet
 
 // the minion has goggle eyes and a wider smile
 const dress = (line: string, skin: Skin): string =>
@@ -135,6 +137,10 @@ const dress = (line: string, skin: Skin): string =>
 // the first extra trick of each skin, and how many it has
 const EXTRAS: Record<Skin, [number, number]> = {
   classic: [0, 0],
+  cat: [0, 0],
+  bunny: [0, 0],
+  ghost: [0, 0],
+  robot: [0, 0],
   minion: [TRICKS.length, MINION_TRICKS.length],
   claude: [TRICKS.length + MINION_TRICKS.length, CLAUDE_TRICKS.length],
 }
@@ -183,7 +189,9 @@ const draw = (x: number, frame: Frame, rows: 1 | 2): string => {
 const render = (x: number, frame: Frame, tick: number, rows: 1 | 2, skin: Skin): string =>
   skin === 'claude'
     ? drawMascot(x, frame, tick, rows === 2)
-    : dress(draw(x, frame, rows), skin)
+    : isPet(skin)
+      ? drawPet(skin, x, frame, tick, rows === 2)
+      : dress(draw(x, frame, rows), skin)
 
 // one 300ms step; returns the next buddy and the two rows to draw
 export const step = (

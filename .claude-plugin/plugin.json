@@ -1,18 +1,22 @@
 {
   "name": "buddy",
-  "version": "0.6.1",
-  "description": "The Claude Code mascot, or a minion, walking right to left above the prompt, stopping to wave, dance, nap or chase a butterfly.",
+  "version": "0.7.0",
+  "description": "A little pet that walks right to left above the prompt: the Claude mascot, a minion, a cat, a bunny, a ghost or a robot.",
   "types": "./types/index.d.ts",
   "userConfig": {
     "skin": {
       "type": "string",
-      "title": "Skin",
-      "description": "claude is the Claude Code mascot; minion has goggle eyes and says bello; classic is a plain face",
+      "title": "Pet",
+      "description": "claude (the mascot), minion, classic, cat, bunny, ghost or robot",
       "default": "claude",
       "options": [
         "claude",
         "minion",
-        "classic"
+        "classic",
+        "cat",
+        "bunny",
+        "ghost",
+        "robot"
       ]
     },
     "color": {

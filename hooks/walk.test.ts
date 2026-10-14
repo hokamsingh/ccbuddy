@@ -105,3 +105,21 @@ test('the Claude mascot draws block rows, its own tricks, and never undefined', 
   }
   expect(seen.size).toBe(3)
 })
+
+test('every pet draws its own rows without undefined, in both sizes', () => {
+  for (const skin of ['cat', 'bunny', 'ghost', 'robot'] as const) {
+    for (let kind = 0; kind < 40; kind++) {
+      let b = { ...create(never), x: 20, untilStop: 0 }
+      const roll = () => kind / 40
+      for (let i = 0; i < 30; i++) {
+        for (const rows of [1, 2] as const) {
+          const moved = step(b, i % 3 === 0, roll, rows, skin)
+          expect(moved.line).not.toContain('undefined')
+          expect(moved.line.split('\n').length).toBe(rows + 1)
+          expect(moved.line).not.toContain('•ᴗ•')
+          if (rows === 1) b = moved.buddy
+        }
+      }
+    }
+  }
+})
