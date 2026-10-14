@@ -1,6 +1,6 @@
 {
   "name": "buddy",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "The Claude Code mascot, or a minion, walking right to left above the prompt, stopping to wave, dance, nap or chase a butterfly.",
   "types": "./types/index.d.ts",
   "userConfig": {
@@ -56,6 +56,12 @@
       "type": "boolean",
       "title": "Show while Claude works",
       "description": "Turn off to give the row back while a turn is running",
+      "default": true
+    },
+    "snug": {
+      "type": "boolean",
+      "title": "Sit on the prompt line",
+      "description": "Close the blank row between the buddy and the prompt line; turn off if the buddy's feet look cut off",
       "default": true
     }
   }
