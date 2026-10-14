@@ -2,7 +2,7 @@ import { test, expect } from 'claude-code/testing'
 
 import { parse } from './command'
 
-const now = { skin: 'minion', color: 'yellow', speed: 'normal', rows: 'compact', showWhileWorking: true, isHidden: false }
+const now = { skin: 'claude', color: 'auto', speed: 'normal', rows: 'compact', showWhileWorking: true, isHidden: false }
 
 test('no args lists the options', () => {
   const out = parse('', now)

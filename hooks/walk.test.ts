@@ -83,3 +83,25 @@ test('the classic skin never says bello', () => {
     }
   }
 })
+
+test('the Claude mascot draws block rows, its own tricks, and never undefined', () => {
+  const seen = new Set<string>()
+  for (let kind = 0; kind < 80; kind++) {
+    let b = { ...create(never), x: 20, untilStop: 0 }
+    const roll = () => kind / 80
+    for (let i = 0; i < 40; i++) {
+      for (const rows of [1, 2] as const) {
+        const moved = step(b, i % 3 === 0, roll, rows, 'claude')
+        expect(moved.line).not.toContain('undefined')
+        expect(moved.line).toContain('▐')
+        expect(moved.line.split('\n').length).toBe(rows + 1)
+        if (rows === 1) b = moved.buddy
+        for (const word of ['hi!', 'hmm?', 'ship it!']) {
+          if (moved.line.includes(word)) seen.add(word)
+        }
+        expect(moved.line).not.toContain('bello')
+      }
+    }
+  }
+  expect(seen.size).toBe(3)
+})

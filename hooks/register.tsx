@@ -10,8 +10,12 @@ const isHidden = atom({ plugin: 'buddy', key: 'isHidden' } as const, false)
 const SPEEDS: Record<string, number> = { slow: 450, normal: 300, fast: 180 }
 
 export const register: Register = (on, options) => {
-  const color = String(options.color)
-  const skin = options.skin === 'classic' ? 'classic' : 'minion'
+  const skin =
+    options.skin === 'classic' || options.skin === 'minion' ? options.skin : 'claude'
+  const color =
+    options.color === undefined || options.color === 'auto'
+      ? { claude: 'claude', minion: 'yellow', classic: 'yellow' }[skin]
+      : String(options.color)
   const rows = options.rows === 'tall' ? 2 : 1
   const tickMs = SPEEDS[String(options.speed)] ?? 300
   const isShownWhileWorking = options.showWhileWorking !== false
@@ -41,7 +45,7 @@ export const register: Register = (on, options) => {
   on('command.run', { command: 'ccbuddy' }, async ($, e) => {
     const outcome = parse(e.args, {
       skin,
-      color,
+      color: String(options.color ?? 'auto'),
       speed: String(options.speed),
       rows: rows === 2 ? 'tall' : 'compact',
       showWhileWorking: isShownWhileWorking,

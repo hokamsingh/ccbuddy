@@ -1,15 +1,16 @@
 {
   "name": "buddy",
-  "version": "0.4.0",
-  "description": "A little minion that walks right to left above the prompt, stops to say bello, dance, nap or chase a butterfly, then carries on.",
+  "version": "0.5.0",
+  "description": "The Claude Code mascot, or a minion, walking right to left above the prompt, stopping to wave, dance, nap or chase a butterfly.",
   "types": "./types/index.d.ts",
   "userConfig": {
     "skin": {
       "type": "string",
       "title": "Skin",
-      "description": "minion has goggle eyes and says bello and banana; classic is the plain buddy",
-      "default": "minion",
+      "description": "claude is the Claude Code mascot; minion has goggle eyes and says bello; classic is a plain face",
+      "default": "claude",
       "options": [
+        "claude",
         "minion",
         "classic"
       ]
@@ -17,9 +18,10 @@
     "color": {
       "type": "string",
       "title": "Color",
-      "description": "Color of the buddy",
-      "default": "yellow",
+      "description": "Color of the buddy; auto uses the skin's own color",
+      "default": "auto",
       "options": [
+        "auto",
         "yellow",
         "magenta",
         "cyan",
@@ -43,7 +45,7 @@
     "rows": {
       "type": "string",
       "title": "Height",
-      "description": "compact takes one row above the prompt; tall takes two so hearts and hops float above the buddy",
+      "description": "compact: a minion or face takes one row and the mascot two; tall: the mascot takes three (with legs) and others two",
       "default": "compact",
       "options": [
         "compact",

@@ -1,5 +1,7 @@
 // Pure buddy brain: no engine calls, so it is easy to test.
 
+import { drawMascot } from './mascot'
+
 export const TRACK = 44
 
 type Dir = 'left' | 'right'
@@ -100,6 +102,16 @@ const MINION_TRICKS: Frame[][] = [
   ],
 ]
 
+// only picked when the skin is the Claude mascot
+const CLAUDE_TRICKS: Frame[][] = [
+  // hello
+  [f('\\(•ᴗ•)', '  hi!'), f('(•ᴗ•)/', '  hi!'), f('\\(•ᴗ•)', '  hi!'), f('(•ᴗ•)/', '  hi there!')],
+  // thinking
+  [f('(•ᴗ•)', '  .'), f('(•ᴗ•)', '  ..'), f('(•ᴗ•)', '  ...'), f('(•o•)', '  hmm?')],
+  // coding
+  [f('(•ᴗ•)', '  </>'), f('(•ᴗ•)', '  { }'), f('(•o•)', '  () =>'), f('\\(★ᴗ★)/', '  ship it!')],
+]
+
 // played when a turn finishes, never picked at random
 const CHEER: Frame[] = [
   air('\\(★ᴗ★)/'),
@@ -110,15 +122,29 @@ const CHEER: Frame[] = [
   f('(•ᴗ•)♡', '   ♡'),
 ]
 
-const ALL = [...TRICKS, ...MINION_TRICKS, CHEER]
+const ALL = [...TRICKS, ...MINION_TRICKS, ...CLAUDE_TRICKS, CHEER]
 const CHEER_KIND = ALL.length - 1
 const LOOPS = 2
 
-export type Skin = 'minion' | 'classic'
+export type Skin = 'claude' | 'minion' | 'classic'
 
 // the minion has goggle eyes and a wider smile
 const dress = (line: string, skin: Skin): string =>
   skin === 'minion' ? line.replaceAll('•', '◉').replaceAll('ᴗ', '‿') : line
+
+// the first extra trick of each skin, and how many it has
+const EXTRAS: Record<Skin, [number, number]> = {
+  classic: [0, 0],
+  minion: [TRICKS.length, MINION_TRICKS.length],
+  claude: [TRICKS.length + MINION_TRICKS.length, CLAUDE_TRICKS.length],
+}
+
+const pickTrick = (skin: Skin, roll: number): number => {
+  const [first, count] = EXTRAS[skin]
+  const index = Math.floor(roll * (TRICKS.length + count))
+
+  return index < TRICKS.length ? index : first + index - TRICKS.length
+}
 
 const between = (lo: number, hi: number, roll: number) =>
   lo + Math.floor(roll * (hi - lo + 1))
@@ -154,6 +180,11 @@ const draw = (x: number, frame: Frame, rows: 1 | 2): string => {
   return `${pad}${body} `
 }
 
+const render = (x: number, frame: Frame, tick: number, rows: 1 | 2, skin: Skin): string =>
+  skin === 'claude'
+    ? drawMascot(x, frame, tick, rows === 2)
+    : dress(draw(x, frame, rows), skin)
+
 // one 300ms step; returns the next buddy and the two rows to draw
 export const step = (
   b: Buddy,
@@ -169,12 +200,11 @@ export const step = (
     const frame = frames[(frames.length * LOOPS - b.stopLeft) % frames.length] ?? LAND
     const buddy = { ...b, tick, stopLeft: b.stopLeft - 1 }
 
-    return { buddy, line: dress(draw(b.x, frame, rows), skin) }
+    return { buddy, line: render(b.x, frame, tick, rows, skin) }
   }
 
   if (b.untilStop <= 0 && b.x > 2 && b.x < TRACK - 12) {
-    const pool = TRICKS.length + (skin === 'minion' ? MINION_TRICKS.length : 0)
-    const stopKind = Math.floor(roll() * pool)
+    const stopKind = pickTrick(skin, roll())
     const buddy = {
       ...b,
       tick,
@@ -201,6 +231,6 @@ export const step = (
 
   return {
     buddy,
-    line: dress(draw(x, f(isBlink ? sprite.replaceAll('•', '-') : sprite), rows), skin),
+    line: render(x, f(isBlink ? sprite.replaceAll('•', '-') : sprite), tick, rows, skin),
   }
 }

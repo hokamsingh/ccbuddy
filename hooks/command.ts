@@ -1,8 +1,8 @@
 // The /ccbuddy command: parses what was typed. Pure, so it is easy to test.
 
 export const CHOICES = {
-  skin: ['minion', 'classic'],
-  color: ['yellow', 'magenta', 'cyan', 'green', 'red', 'blue', 'white'],
+  skin: ['claude', 'minion', 'classic'],
+  color: ['auto', 'yellow', 'magenta', 'cyan', 'green', 'red', 'blue', 'white'],
   speed: ['slow', 'normal', 'fast'],
   rows: ['compact', 'tall'],
 } as const
@@ -38,7 +38,7 @@ export const help = (c: Current): string =>
     `  rows     ${c.rows}  (compact takes one row, tall takes two)`,
     `  working  ${c.showWhileWorking ? 'on' : 'off'}  (show while Claude works)`,
     '',
-    'Usage: /ccbuddy skin classic | color cyan | speed fast | rows tall | working off | hide | show',
+    'Usage: /ccbuddy skin minion | color cyan | speed fast | rows tall | working off | hide | show',
   ].join('\n')
 
 export const parse = (args: string, c: Current): Outcome => {
