@@ -1,0 +1,1 @@
+{ "name": "buddy", "version": "0.1.0", "description": "A cute little buddy that walks right to left above the prompt, stops to dance, wave or nap, then carries on.", "types": "./types/index.d.ts" }
